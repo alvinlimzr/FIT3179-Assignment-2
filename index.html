@@ -7,7 +7,7 @@
   <meta name="description" content="Three Vega-Lite visuals exploring how income relates to life expectancy." />
   <style>
     :root{
-      --maxw: 1280px;          /* wider page */
+      --maxw: 1280px;
       --fg: #111;
       --muted:#5b6572;
       --border:#e6e6e6;
@@ -26,18 +26,18 @@
     nav a:hover{ text-decoration:underline; }
     h1{ font-size:1.9rem; margin:.85rem 0 .4rem; }
     h2{ font-size:1.35rem; margin:2rem 0 .6rem; }
-    p.lede{ color:var(--muted); margin:.25rem 0 1rem; max-width:65ch; }
+    p.lede{ color:var(--muted); margin:.25rem 0 1rem; max-width:none !important; }
     section{ margin: 1.25rem 0 2.25rem; }
     figure{ margin:0; }
     .vis { width:100%; }
-    .vis--wide { max-width: 1200px; margin: 0 auto; }  /* keeps the map centered but bigger */
+    .vis--wide { max-width: 1200px; margin: 0 auto; } /* keeps the map centered but bigger */
     figcaption{ color:var(--muted); font-size:.93rem; margin:.5rem 0 0; }
     .callout{
       background:var(--callout); border:1px solid var(--border);
       padding:.85rem .95rem; border-radius:.8rem; margin:.75rem 0 1rem;
     }
     .callout strong{ color:#0b3d91; }
-    .source-note{ color:var(--muted); font-size:.88rem; border-top:1px dashed var(--border); padding-top:.75rem; margin-top:1.25rem;}
+    .source-note{ color:var(--muted); font-size:.88rem; border-top:1px dashed var(--border); padding-top:.75rem; margin-top:.75rem;}
     .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9em; background:#f1f1f1; padding:.05rem .35rem; border-radius:.35rem; }
   </style>
 </head>
@@ -48,7 +48,7 @@
       <nav class="toc" aria-label="Sections">
         <a href="#map">1. Global snapshot</a>
         <a href="#scatter">2. Relationship</a>
-        <a href="#paths">3. Country paths</a>
+        <a href="#bars">3. Focus comparison</a>
       </nav>
     </div>
   </header>
@@ -56,7 +56,7 @@
   <main id="top">
     <h1>Health & Wealth: a short data story</h1>
     <p class="lede">
-      This page walks you through three views of income and longevity. Start with a world snapshot, then explore how the two relate, and finally follow a few countries from 1960 to today.
+      This page walks you through three views of income and longevity. Start with a world snapshot, then explore how the two relate, and finally compare a few countries side by side.
     </p>
 
     <!-- 1) Global map -->
@@ -77,23 +77,20 @@
       <figure>
         <div id="vis_scatter" class="vis" role="img" aria-live="polite" aria-label="Scatter of life expectancy versus GDP per capita with a year slider"></div>
         <figcaption>Move the <span class="kbd">Year</span> slider below the chart; the GDP axis is log-scaled.</figcaption>
-        <p class="source-note" style="margin-top:.35rem">Note: 2024 data not available.</p>
+        <p class="source-note">Note: 2024 data not available.</p>
       </figure>
       <div class="callout" aria-label="Interpretation note">
         <strong>The curve flattens.</strong> Early income gains often come with big improvements in life expectancy; at higher incomes, the extra years arrive more slowly. Try scrubbing the years and spot countries that outperform their income peers.
       </div>
     </section>
 
-    <!-- 3) Country trajectories -->
-    <section id="paths" aria-labelledby="h-paths">
-      <h2 id="h-paths">3) Country paths — how nations moved from 1960 to today</h2>
+    <!-- 3) Focus comparison bars -->
+    <section id="bars" aria-labelledby="h-bars">
+      <h2 id="h-bars">3) Focus countries — life expectancy (selected year)</h2>
       <figure>
-        <div id="vis_paths" class="vis" role="img" aria-label="Connected scatter showing trajectories for selected countries from 1960 to 2024"></div>
-        <figcaption>Lines show direction over time; dots mark decades. Axes match the scatter above (log GDP).</figcaption>
+        <div id="vis_bars" class="vis" role="img" aria-label="Bar chart comparing life expectancy for focus countries in the selected year"></div>
+        <figcaption>Sorted high to low; hover for GDP per capita context. Uses the same year slider as the scatter.</figcaption>
       </figure>
-      <div class="callout">
-        <strong>How to read it:</strong> compare slopes. Singapore and China turn growth into extra years of life quickly; the United States grows richer with smaller health gains.
-      </div>
     </section>
 
     <section aria-labelledby="h-take">
@@ -115,9 +112,14 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
   <script>
+    // Keep the map version that currently works for you
     vegaEmbed("#vis_map", "world_gdp_map.json?v=16", { actions: false }).catch(console.error);
-    vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=4", { actions: false }).catch(console.error);
-    vegaEmbed("#vis_paths", "country_trajectories.json?v=1", { actions: false }).catch(console.error);
+
+    // Highlighted scatter (make sure you saved the updated life_vs_gdp.json)
+    vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=5", { actions: false }).catch(console.error);
+
+    // New bar comparison (save as focus_bars.json)
+    vegaEmbed("#vis_bars", "focus_bars.json?v=1", { actions: false }).catch(console.error);
   </script>
 </body>
 </html>
