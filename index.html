@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FIT3179 Week 10 — Health & Wealth: A Short Data Story</title>
-  <meta name="description" content="Three Vega-Lite visuals exploring GDP per capita and life expectancy." />
+  <title>FIT3179 Assignment 2 — Health & Wealth</title>
+  <meta name="description" content="Three Vega-Lite visuals exploring how income relates to life expectancy." />
   <style>
     :root{
       --maxw: 1060px;
@@ -20,10 +20,11 @@
       line-height:1.6; margin:0 auto; max-width:var(--maxw); padding:1rem 1.25rem 4rem;
     }
     header{ position: sticky; top:0; background:rgba(255,255,255,.9); backdrop-filter:saturate(160%) blur(6px); border-bottom:1px solid var(--border); z-index:5;}
-    header .bar{ display:flex; align-items:center; gap:1rem; padding:.6rem 0; }
+    header .bar{ display:flex; align-items:center; gap:1rem; padding:.65rem 0; }
+    header strong{ font-size:1rem; letter-spacing:.2px; }
     nav a{ color:#1a73e8; text-decoration:none; margin-right:1rem; font-size:.95rem;}
     nav a:hover{ text-decoration:underline; }
-    h1{ font-size:1.9rem; margin:.6rem 0 .8rem; }
+    h1{ font-size:1.9rem; margin:.85rem 0 .4rem; }
     h2{ font-size:1.35rem; margin:2rem 0 .6rem; }
     p.lede{ color:var(--muted); margin:.25rem 0 1rem; max-width:65ch; }
     section{ margin: 1.25rem 0 2.25rem; }
@@ -35,18 +36,14 @@
       padding:.85rem .95rem; border-radius:.8rem; margin:.75rem 0 1rem;
     }
     .callout strong{ color:#0b3d91; }
-    .grid{ display:grid; gap:1rem; grid-template-columns: 1.1fr .9fr; }
-    @media (max-width:960px){ .grid{ grid-template-columns: 1fr; } }
     .source-note{ color:var(--muted); font-size:.88rem; border-top:1px dashed var(--border); padding-top:.75rem; margin-top:1.25rem;}
-    .badge{ display:inline-block; font-size:.75rem; padding:.15rem .5rem; border:1px solid var(--border); border-radius:999px; background:#fafafa; color:#333; }
-    .toc{ margin-left:auto; white-space:nowrap; overflow:auto; }
     .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9em; background:#f1f1f1; padding:.05rem .35rem; border-radius:.35rem; }
   </style>
 </head>
 <body>
   <header role="banner" aria-label="Sticky navigation">
     <div class="bar">
-      <div><span class="badge">FIT3179 • Week 10</span></div>
+      <strong>FIT3179 Assignment 2</strong>
       <nav class="toc" aria-label="Sections">
         <a href="#map">1. Global snapshot</a>
         <a href="#scatter">2. Relationship</a>
@@ -58,16 +55,14 @@
   <main id="top">
     <h1>Health & Wealth: a short data story</h1>
     <p class="lede">
-      Three concise visuals explore how GDP per capita relates to life expectancy. Start with a global snapshot,
-      then examine the overall relationship, and finally trace how a few countries moved through this space since 1960.
+      This page walks you through three views of income and longevity. Start with a world snapshot, then explore how the two relate, and finally follow a few countries from 1960 to today.
     </p>
 
     <!-- 1) Global map -->
     <section id="map" aria-labelledby="h-map">
       <h2 id="h-map">1) Global snapshot — World GDP per capita (2024)</h2>
       <div class="callout">
-        <strong>What to notice:</strong> High-income clusters in North America, Western Europe and Oceania; gaps across parts of Africa and South Asia.
-        Use this as context before we relate income to health.
+        <strong>What to look for:</strong> a high-income belt across North America, Western Europe and Oceania, and gaps across parts of Africa and South Asia. This sets the scene before we connect income with health.
       </div>
       <figure>
         <div id="vis_map" class="vis" role="img" aria-label="Choropleth map of GDP per capita in 2024"></div>
@@ -78,47 +73,38 @@
     <!-- 2) Relationship -->
     <section id="scatter" aria-labelledby="h-scatter">
       <h2 id="h-scatter">2) Relationship — Life expectancy vs GDP per capita</h2>
-      <div class="grid">
-        <figure>
-          <div id="vis_scatter" class="vis" role="img" aria-live="polite" aria-label="Scatter of life expectancy versus GDP per capita with a year slider"></div>
-          <figcaption>Move the <span class="kbd">Year</span> slider below the chart; GDP axis is log-scaled.</figcaption>
-        </figure>
-        <aside class="callout" aria-label="Interpretation callout">
-          <p><strong>The curve flattens:</strong> early income gains accompany large health improvements,
-            but at high incomes, each extra dollar buys fewer years. Look for regional outliers (e.g., countries with
-            higher life expectancy than peers at similar income levels).</p>
-          <p><strong>Tip:</strong> Watch <span class="kbd">IND</span>, <span class="kbd">CHN</span>, <span class="kbd">USA</span>, <span class="kbd">SGP</span> across years.</p>
-        </aside>
+      <figure>
+        <div id="vis_scatter" class="vis" role="img" aria-live="polite" aria-label="Scatter of life expectancy versus GDP per capita with a year slider"></div>
+        <figcaption>Move the <span class="kbd">Year</span> slider below the chart; the GDP axis is log-scaled.</figcaption>
+      </figure>
+      <!-- The curve flattens: moved BELOW the graph so it isn't squeezed on the right -->
+      <div class="callout" aria-label="Interpretation note">
+        <strong>The curve flattens.</strong> Early income gains often come with big improvements in life expectancy; at higher incomes, the extra years arrive more slowly. Try scrubbing the years and spot countries that outperform their income peers.
       </div>
     </section>
 
-    <!-- 3) Country trajectories (NEW) -->
+    <!-- 3) Country trajectories -->
     <section id="paths" aria-labelledby="h-paths">
       <h2 id="h-paths">3) Country paths — how nations moved from 1960 to today</h2>
-      <div class="callout">
-        <strong>Why this view:</strong> A connected-scatter reveals the <em>path</em> countries take, not just their position.
-        Notice the different slopes: fast GDP growth with rapid health gains (Singapore, China) versus
-        wealth without commensurate life-expectancy improvement (United States).
-      </div>
       <figure>
         <div id="vis_paths" class="vis" role="img" aria-label="Connected scatter showing trajectories for selected countries from 1960 to 2024"></div>
         <figcaption>Lines show direction over time; dots mark decades. Axes match the scatter above (log GDP).</figcaption>
       </figure>
+      <div class="callout">
+        <strong>How to read it:</strong> compare slopes. Singapore and China turn growth into extra years of life quickly; the United States grows richer with smaller health gains.
+      </div>
     </section>
 
     <section aria-labelledby="h-take">
       <h2 id="h-take">Takeaways</h2>
       <ul>
-        <li>Income strongly relates to longevity, but diminishing returns set in at higher GDP per capita.</li>
-        <li>Policy and health systems matter: at similar incomes, outcomes can differ markedly.</li>
+        <li>Income is strongly related to longevity, with diminishing returns at higher GDP per capita.</li>
+        <li>Policy and health systems matter: countries at similar incomes can have very different outcomes.</li>
         <li>Development paths vary—some countries convert growth into health faster than others.</li>
       </ul>
       <p class="source-note">
         Sources: World Bank (GDP per capita, current US$); Our World in Data / UN (life expectancy).  
-        Notes: GDP snaps to nearest available year in the data; countries with missing values are excluded.
-      </p>
-      <p class="source-note">
-        Reuse note: This page substantially extends Week 9 & 10 by adding a new trajectory view, improved narration, and accessibility/UX polish.
+        Notes: GDP snaps to the nearest available year; countries with missing values are excluded.
       </p>
     </section>
   </main>
@@ -128,10 +114,8 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
   <script>
-    // Embed existing charts
     vegaEmbed("#vis_map", "world_gdp_map.json?v=15", { actions: false }).catch(console.error);
     vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=3", { actions: false }).catch(console.error);
-    // Embed new trajectories chart
     vegaEmbed("#vis_paths", "country_trajectories.json?v=1", { actions: false }).catch(console.error);
   </script>
 </body>
