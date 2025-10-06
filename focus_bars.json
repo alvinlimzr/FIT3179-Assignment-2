@@ -5,8 +5,8 @@
   "background": "white",
   "title": { "text": "Focus countries — life expectancy (selected year)", "anchor": "start" },
   "params": [
-    { "name": "Year", "value": 2020, "bind": { "input": "range", "min": 1960, "max": 2024, "step": 1 } }
-  ],
+  { "name": "Year", "value": 2020, "bind": { "input": "range", "min": 1960, "max": 2023, "step": 1 } }
+],
   "data": { "url": "data/Life_expectancy.csv", "format": { "type": "csv" } },
   "transform": [
     {
