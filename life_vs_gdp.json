@@ -56,22 +56,28 @@
     { "calculate": "toNumber(datum['g' + datum.gYear])", "as": "gdp" },
     {
       "filter": "isValid(datum.life) && isFinite(datum.life) && isValid(datum.gdp) && isFinite(datum.gdp) && datum.gdp > 0"
+    },
+    {
+      "calculate": "indexof(['SGP','USA','CHN','IND','AUS','IDN'], datum['Country Code']) >= 0 ? datum['Country Code'] : 'Other'",
+      "as": "Focus"
     }
   ],
   "layer": [
     {
-      "mark": { "type": "point", "filled": true, "opacity": 0.75, "size": 58 },
+      "mark": { "type": "point", "filled": true },
       "encoding": {
-        "x": {
-          "field": "gdp",
-          "type": "quantitative",
-          "title": "GDP per capita (current US$)",
-          "scale": { "type": "log", "nice": true, "clamp": true }
-        },
-        "y": {
-          "field": "life",
-          "type": "quantitative",
-          "title": "Life expectancy at birth (years)"
+        "x": { "field": "gdp", "type": "quantitative", "title": "GDP per capita (current US$)", "scale": { "type": "log", "nice": true, "clamp": true } },
+        "y": { "field": "life", "type": "quantitative", "title": "Life expectancy at birth (years)" },
+        "size": { "condition": [ { "test": "datum.Focus !== 'Other'", "value": 70 } ], "value": 46 },
+        "opacity": { "condition": [ { "test": "datum.Focus !== 'Other'", "value": 0.95 } ], "value": 0.45 },
+        "color": {
+          "field": "Focus",
+          "type": "nominal",
+          "legend": { "title": "Focus countries" },
+          "scale": {
+            "domain": ["SGP","USA","CHN","IND","AUS","IDN","Other"],
+            "range": ["#2d6cdf","#8a3ffc","#0f9960","#d47400","#0b84a5","#e03a3e","#bfc9d6"]
+          }
         },
         "tooltip": [
           { "field": "Country Name", "title": "Country" },
@@ -84,14 +90,20 @@
       }
     },
     {
-      "transform": [
-        { "filter": "indexof(['CHN','IND','USA','SGP'], datum['Country Code']) >= 0" }
-      ],
+      "transform": [{ "filter": "datum.Focus !== 'Other'" }],
       "mark": { "type": "text", "fontWeight": "bold", "dx": 6, "dy": -6 },
       "encoding": {
         "x": { "field": "gdp", "type": "quantitative", "scale": { "type": "log" } },
         "y": { "field": "life", "type": "quantitative" },
-        "text": { "field": "Country Code" }
+        "text": { "field": "Country Code" },
+        "color": {
+          "field": "Focus",
+          "type": "nominal",
+          "scale": {
+            "domain": ["SGP","USA","CHN","IND","AUS","IDN","Other"],
+            "range": ["#2d6cdf","#8a3ffc","#0f9960","#d47400","#0b84a5","#e03a3e","#bfc9d6"]
+          }
+        }
       }
     }
   ]
