@@ -1,14 +1,12 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 960,
+  "width": "container",
   "height": 620,
+  "autosize": { "type": "fit", "contains": "padding", "resize": true },
   "background": "white",
   "config": { "view": { "stroke": null } },
   "projection": { "type": "equalEarth" },
   "title": { "text": "World GDP per capita (USD), 2024", "anchor": "start" },
-
-  "layer": [
-    { "data": { "sphere": {} }, "mark": { "type": "geoshape", "fill": "#e8f4fb" } },
 
     {
       "data": { "graticule": { "step": [30, 30] } },
