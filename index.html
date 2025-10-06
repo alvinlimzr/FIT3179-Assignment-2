@@ -115,11 +115,35 @@
     // Keep the map version that currently works for you
     vegaEmbed("#vis_map", "world_gdp_map.json?v=16", { actions: false }).catch(console.error);
 
-    // Highlighted scatter (make sure you saved the updated life_vs_gdp.json)
-    vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=5", { actions: false }).catch(console.error);
+    // Highlighted scatter
+    vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=5", { actions: false })
+      .then(() => {
+        // After scatter loads, sync its Year slider to the bar chart's slider (hide the bar chart's slider)
+        const syncSliders = () => {
+          const sliders = document.querySelectorAll('input[name="Year"]');
+          if (sliders.length >= 2) {
+            const master = sliders[0];           // keep this visible (scatter)
+            for (let i = 1; i < sliders.length; i++) {
+              sliders[i].style.display = 'none'; // hide others (bar chart)
+            }
+            master.addEventListener('input', () => {
+              for (let i = 1; i < sliders.length; i++) {
+                sliders[i].value = master.value;
+                sliders[i].dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            });
+          }
+        };
+        // run once now and again after bars embed
+        setTimeout(syncSliders, 200);
+        window.__syncYear = syncSliders;
+      })
+      .catch(console.error);
 
-    // New bar comparison (save as focus_bars.json)
-    vegaEmbed("#vis_bars", "focus_bars.json?v=1", { actions: false }).catch(console.error);
+    // New bar comparison
+    vegaEmbed("#vis_bars", "focus_bars.json?v=1", { actions: false })
+      .then(() => { if (window.__syncYear) window.__syncYear(); })
+      .catch(console.error);
   </script>
 </body>
 </html>
