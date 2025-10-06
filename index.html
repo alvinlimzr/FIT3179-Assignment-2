@@ -13,6 +13,7 @@
       --border:#e6e6e6;
       --bg:#fff;
       --callout:#f6f8fb;
+      --ink: #0b3d91;
     }
     html,body{background:var(--bg); color:var(--fg);}
     body{
@@ -30,15 +31,27 @@
     section{ margin: 1.25rem 0 2.25rem; }
     figure{ margin:0; }
     .vis { width:100%; }
-    .vis--wide { max-width: 1200px; margin: 0 auto; } /* keeps the map centered but bigger */
+    .vis--wide { max-width: 1200px; margin: 0 auto; }
     figcaption{ color:var(--muted); font-size:.93rem; margin:.5rem 0 0; }
     .callout{
       background:var(--callout); border:1px solid var(--border);
       padding:.85rem .95rem; border-radius:.8rem; margin:.75rem 0 1rem;
     }
-    .callout strong{ color:#0b3d91; }
-    .source-note{ color:var(--muted); font-size:.88rem; border-top:1px dashed var(--border); padding-top:.75rem; margin-top:.75rem;}
+    .callout strong{ color:var(--ink); }
+    .source-note{ color:var(--muted); font-size:.88rem; border-top:1px dashed var(--border); padding-top:.75rem; margin-top:.6rem;}
     .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9em; background:#f1f1f1; padding:.05rem .35rem; border-radius:.35rem; }
+
+    /* nice paragraph for the final summary */
+    .project-summary{
+      font-size:1.05rem;
+      line-height:1.75;
+      color:#273242;
+      background:#fafbff;
+      border:1px solid #e8ecf6;
+      border-radius:.9rem;
+      padding:1rem 1.1rem;
+      max-width: 75ch;
+    }
   </style>
 </head>
 <body>
@@ -63,7 +76,7 @@
     <section id="map" aria-labelledby="h-map">
       <h2 id="h-map">1) Global snapshot — World GDP per capita (2024)</h2>
       <div class="callout">
-        <strong>What to look for:</strong> a high-income belt across North America, Western Europe and Oceania, and gaps across parts of Africa and South Asia. This sets the scene before we connect income with health.
+        <strong>What you’re seeing:</strong> incomes are highest across North America, Western Europe, Australia/New Zealand and parts of East Asia. Many countries in Sub-Saharan Africa and South Asia have much lower incomes. Grey areas indicate places where 2024 values are missing.
       </div>
       <figure>
         <div id="vis_map" class="vis vis--wide" role="img" aria-label="Choropleth map of GDP per capita in 2024"></div>
@@ -80,7 +93,7 @@
         <p class="source-note">Note: 2024 data not available.</p>
       </figure>
       <div class="callout" aria-label="Interpretation note">
-        <strong>The curve flattens.</strong> Early income gains often come with big improvements in life expectancy; at higher incomes, the extra years arrive more slowly. Try scrubbing the years and spot countries that outperform their income peers.
+        <strong>The curve flattens.</strong> From very low to middle incomes, life expectancy jumps quickly—think basic sanitation, vaccines and safer births. After roughly US$20–30k per person, extra income buys smaller health gains. Countries at similar income levels can still differ a lot: Singapore and Japan squeeze out more years than peers, while the United States sits below countries with comparable GDP.
       </div>
     </section>
 
@@ -90,16 +103,15 @@
       <figure>
         <div id="vis_bars" class="vis" role="img" aria-label="Bar chart comparing life expectancy for focus countries in the selected year"></div>
         <figcaption>Sorted high to low; hover for GDP per capita context. Uses the same year slider as the scatter.</figcaption>
+        <p class="source-note">Note: 2024 data not available.</p>
       </figure>
     </section>
 
     <section aria-labelledby="h-take">
-      <h2 id="h-take">Takeaways</h2>
-      <ul>
-        <li>Income is strongly related to longevity, with diminishing returns at higher GDP per capita.</li>
-        <li>Policy and health systems matter: countries at similar incomes can have very different outcomes.</li>
-        <li>Development paths vary—some countries convert growth into health faster than others.</li>
-      </ul>
+      <h2 id="h-take">Project summary</h2>
+      <p class="project-summary">
+        Globally, richer countries tend to live longer, but the payoff slows as incomes rise. Moving out of poverty delivers big health improvements; beyond middle-income levels, progress depends more on effective health systems and policy than on income alone. Looking at Singapore, the United States, China, India, Australia and Indonesia side by side shows how similar incomes can lead to different outcomes—and how some nations convert growth into extra years of life faster than others.
+      </p>
       <p class="source-note">
         Sources: World Bank (GDP per capita, current US$); Our World in Data / UN (life expectancy).  
         Notes: GDP snaps to the nearest available year; countries with missing values are excluded.
@@ -116,16 +128,18 @@
     vegaEmbed("#vis_map", "world_gdp_map.json?v=16", { actions: false }).catch(console.error);
 
     // Highlighted scatter
-    vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=5", { actions: false })
+    vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=6", { actions: false })
       .then(() => {
-        // After scatter loads, sync its Year slider to the bar chart's slider (hide the bar chart's slider)
+        // Sync 'Year' sliders (hide duplicates); both specs capped at 2023
         const syncSliders = () => {
           const sliders = document.querySelectorAll('input[name="Year"]');
           if (sliders.length >= 2) {
-            const master = sliders[0];           // keep this visible (scatter)
+            const master = sliders[0];           // visible (scatter)
             for (let i = 1; i < sliders.length; i++) {
-              sliders[i].style.display = 'none'; // hide others (bar chart)
+              sliders[i].style.display = 'none'; // hide others (bars)
+              sliders[i].max = '2023';
             }
+            master.max = '2023';
             master.addEventListener('input', () => {
               for (let i = 1; i < sliders.length; i++) {
                 sliders[i].value = master.value;
@@ -134,14 +148,13 @@
             });
           }
         };
-        // run once now and again after bars embed
         setTimeout(syncSliders, 200);
         window.__syncYear = syncSliders;
       })
       .catch(console.error);
 
-    // New bar comparison
-    vegaEmbed("#vis_bars", "focus_bars.json?v=1", { actions: false })
+    // Bar comparison
+    vegaEmbed("#vis_bars", "focus_bars.json?v=2", { actions: false })
       .then(() => { if (window.__syncYear) window.__syncYear(); })
       .catch(console.error);
   </script>
