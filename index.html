@@ -41,7 +41,7 @@
     .source-note{ color:var(--muted); font-size:.88rem; border-top:1px dashed var(--border); padding-top:.75rem; margin-top:.6rem;}
     .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9em; background:#f1f1f1; padding:.05rem .35rem; border-radius:.35rem; }
 
-    /* nice paragraph for the final summary */
+    /* full-width, readable project summary */
     .project-summary{
       font-size:1.05rem;
       line-height:1.75;
@@ -50,7 +50,7 @@
       border:1px solid #e8ecf6;
       border-radius:.9rem;
       padding:1rem 1.1rem;
-      max-width: 75ch;
+      max-width: none; /* full line */
     }
   </style>
 </head>
@@ -113,7 +113,7 @@
         Globally, richer countries tend to live longer, but the payoff slows as incomes rise. Moving out of poverty delivers big health improvements; beyond middle-income levels, progress depends more on effective health systems and policy than on income alone. Looking at Singapore, the United States, China, India, Australia and Indonesia side by side shows how similar incomes can lead to different outcomes—and how some nations convert growth into extra years of life faster than others.
       </p>
       <p class="source-note">
-        Sources: World Bank (GDP per capita, current US$); Our World in Data / UN (life expectancy).  
+        Sources: World Bank (GDP per capita, current US$); Our World in Data / UN (life expectancy).
         Notes: GDP snaps to the nearest available year; countries with missing values are excluded.
       </p>
     </section>
@@ -124,22 +124,25 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
   <script>
-    // Keep the map version that currently works for you
+    // Map (keep the working spec)
     vegaEmbed("#vis_map", "world_gdp_map.json?v=16", { actions: false }).catch(console.error);
 
-    // Highlighted scatter
+    // Scatter
     vegaEmbed("#vis_scatter", "life_vs_gdp.json?v=6", { actions: false })
       .then(() => {
-        // Sync 'Year' sliders (hide duplicates); both specs capped at 2023
+        // Hide duplicate sliders and sync values. Cap all sliders to 2023.
         const syncSliders = () => {
           const sliders = document.querySelectorAll('input[name="Year"]');
           if (sliders.length >= 2) {
-            const master = sliders[0];           // visible (scatter)
+            const master = sliders[0];       // visible (scatter)
+            master.max = '2023';
+
             for (let i = 1; i < sliders.length; i++) {
-              sliders[i].style.display = 'none'; // hide others (bars)
+              const wrap = sliders[i].closest('.vega-bindings');
+              if (wrap) wrap.style.display = 'none'; // hides label + value + input (prevents "Year2022")
               sliders[i].max = '2023';
             }
-            master.max = '2023';
+
             master.addEventListener('input', () => {
               for (let i = 1; i < sliders.length; i++) {
                 sliders[i].value = master.value;
@@ -153,7 +156,7 @@
       })
       .catch(console.error);
 
-    // Bar comparison
+    // Bars
     vegaEmbed("#vis_bars", "focus_bars.json?v=2", { actions: false })
       .then(() => { if (window.__syncYear) window.__syncYear(); })
       .catch(console.error);
